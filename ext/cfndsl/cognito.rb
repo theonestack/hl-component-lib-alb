@@ -20,7 +20,6 @@ end
 
 def cognito_rule(cfn,listener)
   #Skip all non cognito rules
-  response = []
   listener['rules'].each do |rule|
     rule['actions'].each do |action,config|
       case action
@@ -29,12 +28,11 @@ def cognito_rule(cfn,listener)
       when 'redirect'
         next
       when 'cognito'
-        response << cognito(cfn, config) 
+        return cognito(cfn, config) 
       when 'fixed'
         next
       end
     end
-    return response
   end
 end
 
