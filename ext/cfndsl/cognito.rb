@@ -53,7 +53,7 @@ def cognito(cfn, value)
   # -UserPoolArn
   # -UserPoolClientId
   # -UserPoolDomain
-  return cognito_alb(cfn.Ref(:UserPoolArn),cfn.Ref(:UserPoolClientId),cfn.Ref(:UserPoolDomain))
+  return cognito_alb(cfn.Ref(:UserPoolId),cfn.Ref(:UserPoolClientId),cfn.Ref(:UserPoolDomainName))
 end
 
 def fixed(value)
