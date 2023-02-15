@@ -5,7 +5,7 @@
 ## APPLICATION-LOAD-BALANCER
 
 ## hl-component-application-loadbalancer `actions.rb`
-def rule_actions(cfn, actions, priority)
+def rule_actions(cfn, actions)
   response = []
   actions.each do |action,config|
     case action
