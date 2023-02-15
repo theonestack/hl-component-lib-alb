@@ -4,21 +4,8 @@
 
 ## APPLICATION-LOAD-BALANCER
 
-def cognito_alb(user_pool_arn, user_pool_client_id, user_pool_domain)
-  #Required, create with the other component 
- # -UserPoolArn
- # -UserPoolClientId
- # -UserPoolDomain
- return { Type: "authenticate-cognito", 
-          AuthenticateCognitoConfig: {
-           UserPoolArn: user_pool_arn,
-           UserPoolClientId: user_pool_client_id,
-           UserPoolDomain: user_pool_domain
-        } }
-end
-
 ## hl-component-application-loadbalancer `actions.rb`
-def rule_actions(cfn, actions)
+def rule_actions(cfn, actions, priority)
   response = []
   actions.each do |action,config|
     case action
@@ -36,7 +23,7 @@ def rule_actions(cfn, actions)
 end
 
 def forward(value)
-  return { Type: "forward", TargetGroupArn: Ref("#{value}TargetGroup") }
+  return { Type: "forward", Order: 2000, TargetGroupArn: Ref("#{value}TargetGroup") }
 end
 
 def redirect(value)
@@ -44,20 +31,23 @@ def redirect(value)
   when 'http_to_https'
     return http_to_https_redirect()
   else
-    return { Type: "redirect", RedirectConfig: value }
+    return { Type: "redirect", Order: 5000, RedirectConfig: value }
   end
 end
 
 def cognito(cfn, value)
-  #Required, create with the other component 
-  # -UserPoolArn
-  # -UserPoolClientId
-  # -UserPoolDomain
-  return cognito_alb(cfn.Ref(:UserPoolId),cfn.Ref(:UserPoolClientId),cfn.Ref(:UserPoolDomainName))
+  return { Type: "authenticate-cognito",
+          Order: 1, 
+          AuthenticateCognitoConfig: {
+           UserPoolArn: cfn.Ref(:UserPoolId),
+           UserPoolClientId: cfn.Ref(:UserPoolClientId),
+           UserPoolDomain: cfn.Ref(:UserPoolDomainName)
+          } 
+        }
 end
 
 def fixed(value)
-  response = { Type: 'fixed-response', FixedResponseConfig: {}}
+  response = { Type: 'fixed-response', Order: 10000, FixedResponseConfig: {}}
   response[:FixedResponseConfig][:ContentType] = value['type'] if value.has_key?'type'
   response[:FixedResponseConfig][:MessageBody] = value['body'] if value.has_key? 'body'
   response[:FixedResponseConfig][:StatusCode] = value['code']
@@ -65,7 +55,7 @@ def fixed(value)
 end
 
 def http_to_https_redirect()
-  return { Type: "redirect",
+  return { Type: "redirect", Order: 7000,
     RedirectConfig: {
       Host: '#{host}',
       Path: '/#{path}',
