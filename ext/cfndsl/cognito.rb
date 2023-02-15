@@ -18,7 +18,7 @@ def cognito_exists(listener)
 end
 
 
-def cognito_rule(listener)
+def cognito_rule(cfn,listener)
   #Skip all non cognito rules
   response = []
   listener['rules'].each do |rule|
