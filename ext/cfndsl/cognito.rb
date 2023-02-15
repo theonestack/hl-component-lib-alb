@@ -15,7 +15,7 @@ def rule_actions(cfn, actions)
     when 'redirect'
       response << redirect(config)
     when 'cognito'
-      response << cognito(config) #Skip as added to default actions on listener
+      response << cognito(cfn, config) #Skip as added to default actions on listener
     when 'fixed'
       response << fixed(config)
     end
