@@ -5,6 +5,34 @@
 ## APPLICATION-LOAD-BALANCER
 
 ## hl-component-application-loadbalancer `actions.rb`
+
+def cognito_exists(actions)
+  actions.each do |value|
+    if value == 'cognito'
+      return true
+    end
+  end
+  return false
+end
+
+def cognito_rule(actions)
+  #Skip all non cognito rules
+  response = []
+  actions.each do |action,config|
+    case action
+    when 'targetgroup'
+      next
+    when 'redirect'
+      next
+    when 'cognito'
+      response << cognito(config) 
+    when 'fixed'
+      next
+    end
+  end
+  return response
+end
+
 def rule_actions(cfn, actions)
   response = []
   actions.each do |action,config|
@@ -14,7 +42,7 @@ def rule_actions(cfn, actions)
     when 'redirect'
       response << redirect(config)
     when 'cognito'
-      response << cognito(cfn, config)
+      next #Skip as added to default actions on listener
     when 'fixed'
       response << fixed(config)
     end
