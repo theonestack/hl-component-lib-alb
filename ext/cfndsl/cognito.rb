@@ -7,14 +7,16 @@
 ## hl-component-application-loadbalancer `actions.rb`
 
 def cognito_exists(listener)
-  listener['rules'].each do |rule|
-    rule['actions'].each do |action, value|
-      if action == 'cognito'
-        return true
+  if !listener['rules'].nil?
+    listener['rules'].each do |rule|
+      rule['actions'].each do |action, value|
+        if action == 'cognito'
+          return true
+        end
       end
     end
+    return false
   end
-  return false
 end
 
 
