@@ -100,4 +100,23 @@ def http_to_https_redirect()
   }
 end
 
+def generate_fargate_listener_conditions(rule)
+  listener_conditions = []
+  if rule.key?("path")
+    listener_conditions << { Field: "path-pattern", Values: [ rule["path"] ].flatten() }
+  end
+  if rule.key?("host")
+    hosts = []
+    if rule["host"].include?('!DNSDomain')
+      host_subdomain = rule["host"].gsub('!DNSDomain', '') #remove <DNSDomain>
+      hosts << FnJoin("", [ host_subdomain , Ref('DnsDomain') ])
+    elsif rule["host"].include?('.')
+      hosts << rule["host"]
+    else
+      hosts << FnJoin("", [ rule["host"], ".", Ref('DnsDomain') ])
+    end
+    listener_conditions << { Field: "host-header", Values: hosts }
+  end
+  return listener_conditions
+end
 #####
