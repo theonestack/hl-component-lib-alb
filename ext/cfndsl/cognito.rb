@@ -38,7 +38,7 @@
 #   end
 # end
 
-def rule_actions(cfn, actions)
+def rule_actions(actions)
   response = []
   actions.each do |action,config|
     case action
@@ -46,8 +46,8 @@ def rule_actions(cfn, actions)
       response << forward(config)
     when 'redirect'
       response << redirect(config)
-    when 'cognito'
-      next #Skip as added to default actions on listener #TODO check if this is still needed
+    # when 'cognito'
+    #   next #Skip as added to default actions on listener #TODO check if this is still needed
     when 'fixed'
       response << fixed(config)
     end
