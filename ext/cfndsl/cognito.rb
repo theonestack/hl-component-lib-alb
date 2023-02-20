@@ -6,37 +6,37 @@
 
 ## hl-component-application-loadbalancer `actions.rb`
 
-def cognito_exists(listener)
-  if !listener['rules'].nil?
-    listener['rules'].each do |rule|
-      rule['actions'].each do |action, value|
-        if action == 'cognito'
-          return true
-        end
-      end
-    end
-    return false
-  end
-end
+# def cognito_exists(listener)
+#   if !listener['rules'].nil?
+#     listener['rules'].each do |rule|
+#       rule['actions'].each do |action, value|
+#         if action == 'cognito'
+#           return true
+#         end
+#       end
+#     end
+#     return false
+#   end
+# end
 
 
-def cognito_rule(cfn,listener)
-  #Skip all non cognito rules
-  listener['rules'].each do |rule|
-    rule['actions'].each do |action,config|
-      case action
-      when 'targetgroup'
-        next
-      when 'redirect'
-        next
-      when 'cognito'
-        return cognito(cfn) 
-      when 'fixed'
-        next
-      end
-    end
-  end
-end
+# def cognito_rule(cfn,listener)
+#   #Skip all non cognito rules
+#   listener['rules'].each do |rule|
+#     rule['actions'].each do |action,config|
+#       case action
+#       when 'targetgroup'
+#         next
+#       when 'redirect'
+#         next
+#       when 'cognito'
+#         return cognito(cfn) 
+#       when 'fixed'
+#         next
+#       end
+#     end
+#   end
+# end
 
 def rule_actions(cfn, actions)
   response = []
@@ -47,7 +47,7 @@ def rule_actions(cfn, actions)
     when 'redirect'
       response << redirect(config)
     when 'cognito'
-      next #Skip as added to default actions on listener
+      next #Skip as added to default actions on listener #TODO check if this is still needed
     when 'fixed'
       response << fixed(config)
     end
