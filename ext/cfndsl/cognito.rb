@@ -1,43 +1,4 @@
 
-
-#TODO Move all actions etc to here  
-
-## APPLICATION-LOAD-BALANCER
-
-## hl-component-application-loadbalancer `actions.rb`
-
-# def cognito_exists(listener)
-#   if !listener['rules'].nil?
-#     listener['rules'].each do |rule|
-#       rule['actions'].each do |action, value|
-#         if action == 'cognito'
-#           return true
-#         end
-#       end
-#     end
-#     return false
-#   end
-# end
-
-
-# def cognito_rule(cfn,listener)
-#   #Skip all non cognito rules
-#   listener['rules'].each do |rule|
-#     rule['actions'].each do |action,config|
-#       case action
-#       when 'targetgroup'
-#         next
-#       when 'redirect'
-#         next
-#       when 'cognito'
-#         return cognito(cfn) 
-#       when 'fixed'
-#         next
-#       end
-#     end
-#   end
-# end
-
 def rule_actions(actions)
   response = []
   actions.each do |action,config|
@@ -46,8 +7,6 @@ def rule_actions(actions)
       response << forward(config)
     when 'redirect'
       response << redirect(config)
-    # when 'cognito'
-    #   next #Skip as added to default actions on listener #TODO check if this is still needed
     when 'fixed'
       response << fixed(config)
     end
@@ -99,24 +58,3 @@ def http_to_https_redirect()
     }
   }
 end
-
-def generate_fargate_listener_conditions(rule)
-  listener_conditions = []
-  if rule.key?("path")
-    listener_conditions << { Field: "path-pattern", Values: [ rule["path"] ].flatten() }
-  end
-  if rule.key?("host")
-    hosts = []
-    if rule["host"].include?('!DNSDomain')
-      host_subdomain = rule["host"].gsub('!DNSDomain', '') #remove <DNSDomain>
-      hosts << FnJoin("", [ host_subdomain , Ref('DnsDomain') ])
-    elsif rule["host"].include?('.')
-      hosts << rule["host"]
-    else
-      hosts << FnJoin("", [ rule["host"], ".", Ref('DnsDomain') ])
-    end
-    listener_conditions << { Field: "host-header", Values: hosts }
-  end
-  return listener_conditions
-end
-#####
