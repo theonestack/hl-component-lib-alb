@@ -30,7 +30,7 @@ def cognito_rule(cfn,listener)
       when 'redirect'
         next
       when 'cognito'
-        return cognito(cfn, config) 
+        return cognito(cfn) 
       when 'fixed'
         next
       end
@@ -68,7 +68,7 @@ def redirect(value)
   end
 end
 
-def cognito(cfn, value)
+def cognito(cfn)
   return { Type: "authenticate-cognito",
           Order: 1, 
           AuthenticateCognitoConfig: {
