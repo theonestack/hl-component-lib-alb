@@ -27,13 +27,13 @@ def redirect(value)
   end
 end
 
-def cognito(UserPoolId, UserPoolClientId, UserPoolDomainName)
+def cognito(user_pool_id, user_pool_client_id, user_pool_domain_name)
   return { Type: "authenticate-cognito",
           Order: 1, 
           AuthenticateCognitoConfig: {
-           UserPoolArn: UserPoolId, 
-           UserPoolClientId: UserPoolClientId,
-           UserPoolDomain: UserPoolDomainName
+           UserPoolArn: user_pool_id, 
+           UserPoolClientId: user_pool_client_id,
+           UserPoolDomain: user_pool_domain_name
           } 
         }
 end
