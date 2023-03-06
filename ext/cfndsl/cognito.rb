@@ -27,13 +27,13 @@ def redirect(value)
   end
 end
 
-def cognito(cfn)
+def cognito(UserPoolId, UserPoolClientId, UserPoolDomainName)
   return { Type: "authenticate-cognito",
           Order: 1, 
           AuthenticateCognitoConfig: {
-           UserPoolArn: cfn.Ref(:UserPoolId),
-           UserPoolClientId: cfn.Ref(:UserPoolClientId),
-           UserPoolDomain: cfn.Ref(:UserPoolDomainName)
+           UserPoolArn: UserPoolId, 
+           UserPoolClientId: UserPoolClientId,
+           UserPoolDomain: UserPoolDomainName
           } 
         }
 end
